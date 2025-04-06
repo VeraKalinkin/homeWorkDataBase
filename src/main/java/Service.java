@@ -4,24 +4,29 @@ public class Service {
 
     private final DataBase dataBase;
 
-    public Service() {
-        this.dataBase = new DataBase();
+    public Service(DataBase dataBase) {
+        this.dataBase = dataBase;
+    }
+
+    public boolean createTable() {
         dataBase.createTable();
+        return true;
     }
 
-    public void addUser(User user){
-        dataBase.addUser(user.id, user.name, user.email);
+    public boolean addUser(Long id, String name, String email) {
+        dataBase.addUser(id, name, email);
+        return true;
     }
 
-    public User findUserById(Long id){
+    public User findUserById(Long id) {
         return dataBase.findById(id);
     }
 
-    public ArrayList<User> findAll(){
+    public ArrayList<User> findAll() {
         return dataBase.findAll();
     }
 
-    public void deleteById(Long id){
+    public void deleteById(Long id) {
         dataBase.deleteUserById(id);
     }
 }

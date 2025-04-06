@@ -6,13 +6,13 @@ public class DataBase {
     //region connection
     private final Connection connection = getNewConnection();
 
-    public DataBase(){
+    public DataBase() {
     }
 
-    Connection getNewConnection(){
+    Connection getNewConnection() {
         try {
             return DriverManager.getConnection("jdbc:h2:mem:");
-        } catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return null;
@@ -27,13 +27,13 @@ public class DataBase {
 
     }
 
-    public void createTable(){
+    public void createTable() {
         String TableCreateQuery = "CREATE TABLE users " +
                 "(id LONG PRIMARY KEY, name VARCHAR(30), email VARCHAR(30))";
         insertUpdateDrop(TableCreateQuery);
     }
 
-    public void addUser(Long id, String name, String email){
+    public void addUser(Long id, String name, String email) {
         try {
             String query = "INSERT INTO users(id, name, email) values(?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -41,16 +41,16 @@ public class DataBase {
             preparedStatement.setString(2, name);
             preparedStatement.setString(3, email);
             preparedStatement.execute();
-        } catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    private int insertUpdateDrop(String query){
+    private int insertUpdateDrop(String query) {
         try {
             Statement statement = connection.createStatement();
             return statement.executeUpdate(query);
-        } catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return 0;
@@ -60,13 +60,13 @@ public class DataBase {
         try {
             Statement statement = connection.createStatement();
             return statement.executeQuery(query);
-        } catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return null;
     }
 
-    public User findById(Long id){
+    public User findById(Long id) {
         try {
             String query = "SELECT * FROM users WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -75,66 +75,71 @@ public class DataBase {
 
             return createUser(resultSet);
 
-        } catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return null;
     }
 
-    public ArrayList<User> findAll(){
+    public ArrayList<User> findAll() {
         ArrayList<User> users = new ArrayList<>();
         try {
             String query = "SELECT * FROM users";
             ResultSet resultSet = select(query);
 
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 User user = new User(resultSet.getLong("id"),
                         resultSet.getString("name"),
                         resultSet.getString("email"));
                 users.add(user);
             }
 
-        } catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return users;
     }
 
-    public void deleteUserById(Long id){
+    public void deleteUserById(Long id) {
         try {
             String query = "DELETE FROM users WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setLong(1, id);
             preparedStatement.execute();
-        } catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    private User createUser(ResultSet resultSet){
+    private User createUser(ResultSet resultSet) {
         try {
             long id = 0L;
             String name = "name";
             String email = "email";
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 id = resultSet.getLong(1);
                 name = resultSet.getString(2);
                 email = resultSet.getString(3);
             }
             return new User(id, name, email);
 
-        } catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return null;
     }
 
     private void printResult(ResultSet resultSet) throws SQLException {
-        while (resultSet.next()){
-            System.out.print(resultSet.getLong(1));
-            System.out.print(' ' + resultSet.getString(2) + ' ');
-            System.out.print(resultSet.getString(3));
-            System.out.println();
+        try {
+            while (resultSet.next()) {
+                System.out.print(resultSet.getLong(1));
+                System.out.print(' ' + resultSet.getString(2) + ' ');
+                System.out.print(resultSet.getString(3));
+                System.out.println();
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
+
     }
 }

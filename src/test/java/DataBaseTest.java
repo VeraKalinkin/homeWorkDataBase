@@ -11,8 +11,8 @@ public class DataBaseTest {
     @Test
     void shouldGetJdbcConnection() throws SQLException {
         DataBase dataBase = new DataBase();
-        try(Connection connection = dataBase.getNewConnection()) {
-            assert(connection.isValid(0));
+        try (Connection connection = dataBase.getNewConnection()) {
+            assert (connection.isValid(0));
         }
     }
 
@@ -25,14 +25,14 @@ public class DataBaseTest {
     }
 
     @Test
-    void shouldCatchInsertException(){
+    void shouldCatchInsertException() {
         DataBase dataBase = new DataBase();
         dataBase.createTable();
         dataBase.createTable();
     }
 
     @Test
-    void shouldAddAndFindUser(){
+    void shouldAddAndFindUser() {
         DataBase dataBase = new DataBase();
         dataBase.createTable();
         dataBase.addUser(1L, "John", "example.com");
@@ -42,10 +42,10 @@ public class DataBaseTest {
     }
 
     @Test
-    void shouldAddAndFindUserService(){
-        Service service = new Service();
-        User user = new User(1L, "Mike", "example.com");
-        service.addUser(user);
+    void shouldAddAndFindUserService() {
+        Service service = new Service(new DataBase());
+        service.createTable();
+        service.addUser(1L, "Mike", "example.com");
         Assertions.assertEquals("example.com", service.findUserById(1L).email);
     }
 
