@@ -27,13 +27,13 @@ public class DataBase {
 
     }
 
-    public void createTable() {
+    public boolean createTable() {
         String TableCreateQuery = "CREATE TABLE users " +
                 "(id LONG PRIMARY KEY, name VARCHAR(30), email VARCHAR(30))";
-        insertUpdateDrop(TableCreateQuery);
+        return insertUpdateDrop(TableCreateQuery) >= 0;
     }
 
-    public void addUser(Long id, String name, String email) {
+    public boolean addUser(Long id, String name, String email) {
         try {
             String query = "INSERT INTO users(id, name, email) values(?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -41,9 +41,11 @@ public class DataBase {
             preparedStatement.setString(2, name);
             preparedStatement.setString(3, email);
             preparedStatement.execute();
+            return true;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return false;
     }
 
     private int insertUpdateDrop(String query) {
@@ -53,7 +55,7 @@ public class DataBase {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return 0;
+        return -1;
     }
 
     ResultSet select(String query) {
@@ -78,7 +80,7 @@ public class DataBase {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return null;
+        return new User(0L, "Name", "email");
     }
 
     public ArrayList<User> findAll() {
@@ -100,15 +102,17 @@ public class DataBase {
         return users;
     }
 
-    public void deleteUserById(Long id) {
+    public boolean deleteUserById(Long id) {
         try {
             String query = "DELETE FROM users WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setLong(1, id);
             preparedStatement.execute();
+            return true;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return false;
     }
 
     private User createUser(ResultSet resultSet) {
@@ -126,7 +130,7 @@ public class DataBase {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return null;
+        return new User(0L, "Name", "email");
     }
 
     private void printResult(ResultSet resultSet) throws SQLException {

@@ -9,13 +9,11 @@ public class Service {
     }
 
     public boolean createTable() {
-        dataBase.createTable();
-        return true;
+        return dataBase.createTable();
     }
 
     public boolean addUser(Long id, String name, String email) {
-        dataBase.addUser(id, name, email);
-        return true;
+        return dataBase.addUser(id, name, email);
     }
 
     public User findUserById(Long id) {
@@ -26,7 +24,7 @@ public class Service {
         return dataBase.findAll();
     }
 
-    public void deleteById(Long id) {
-        dataBase.deleteUserById(id);
+    public boolean deleteById(Long id) {
+        return dataBase.deleteUserById(id);
     }
 }
