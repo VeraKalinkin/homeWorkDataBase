@@ -19,13 +19,6 @@ public class DataBase {
     }
     //endregion
 
-    public static void main(String[] args) throws SQLException {
-        DataBase dataBase = new DataBase();
-        dataBase.createTable();
-        dataBase.addUser(1L, "Jonn", "example.com");
-        dataBase.addUser(2L, "Mike", "email.ru");
-
-    }
 
     public boolean createTable() {
         String TableCreateQuery = "CREATE TABLE users " +
@@ -59,7 +52,7 @@ public class DataBase {
     }
 
     ResultSet select(String query) {
-        try {
+        try (connection) {
             Statement statement = connection.createStatement();
             return statement.executeQuery(query);
         } catch (SQLException e) {
@@ -69,7 +62,7 @@ public class DataBase {
     }
 
     public User findById(Long id) {
-        try {
+        try (connection) {
             String query = "SELECT * FROM users WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setLong(1, id);
@@ -87,13 +80,14 @@ public class DataBase {
         ArrayList<User> users = new ArrayList<>();
         try {
             String query = "SELECT * FROM users";
-            ResultSet resultSet = select(query);
+            try (ResultSet resultSet = select(query)) {
 
-            while (resultSet.next()) {
-                User user = new User(resultSet.getLong("id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("email"));
-                users.add(user);
+                while (resultSet.next()) {
+                    User user = new User(resultSet.getLong("id"),
+                            resultSet.getString("name"),
+                            resultSet.getString("email"));
+                    users.add(user);
+                }
             }
 
         } catch (SQLException e) {
@@ -103,7 +97,7 @@ public class DataBase {
     }
 
     public boolean deleteUserById(Long id) {
-        try {
+        try (connection) {
             String query = "DELETE FROM users WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setLong(1, id);
@@ -133,8 +127,8 @@ public class DataBase {
         return new User(0L, "Name", "email");
     }
 
-    private void printResult(ResultSet resultSet) throws SQLException {
-        try {
+    private void printResult(ResultSet resultSet) {
+        try (resultSet) {
             while (resultSet.next()) {
                 System.out.print(resultSet.getLong(1));
                 System.out.print(' ' + resultSet.getString(2) + ' ');
