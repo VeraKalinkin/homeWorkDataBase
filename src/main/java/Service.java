@@ -8,10 +8,6 @@ public class Service {
         this.dataBase = dataBase;
     }
 
-    public boolean createTable() {
-        return dataBase.createTable();
-    }
-
     public boolean addUser(Long id, String name, String email) {
         return dataBase.addUser(id, name, email);
     }

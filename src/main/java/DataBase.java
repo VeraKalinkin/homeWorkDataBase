@@ -3,31 +3,14 @@ import java.util.ArrayList;
 
 public class DataBase {
 
-    //region connection
-    private final Connection connection = getNewConnection();
+    static GetConnection getConnection = new GetConnection();
 
     public DataBase() {
     }
 
-    Connection getNewConnection() {
-        try {
-            return DriverManager.getConnection("jdbc:h2:mem:");
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return null;
-    }
-    //endregion
-
-
-    public boolean createTable() {
-        String TableCreateQuery = "CREATE TABLE users " +
-                "(id LONG PRIMARY KEY, name VARCHAR(30), email VARCHAR(30))";
-        return insertUpdateDrop(TableCreateQuery) >= 0;
-    }
-
     public boolean addUser(Long id, String name, String email) {
         try {
+            Connection connection = getConnection.getConnection();
             String query = "INSERT INTO users(id, name, email) values(?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setLong(1, id);
@@ -43,6 +26,7 @@ public class DataBase {
 
     private int insertUpdateDrop(String query) {
         try {
+            Connection connection = getConnection.getConnection();
             Statement statement = connection.createStatement();
             return statement.executeUpdate(query);
         } catch (SQLException e) {
@@ -52,7 +36,7 @@ public class DataBase {
     }
 
     ResultSet select(String query) {
-        try (connection) {
+        try (Connection connection = getConnection.getConnection();) {
             Statement statement = connection.createStatement();
             return statement.executeQuery(query);
         } catch (SQLException e) {
@@ -62,7 +46,7 @@ public class DataBase {
     }
 
     public User findById(Long id) {
-        try (connection) {
+        try (Connection connection = getConnection.getConnection()) {
             String query = "SELECT * FROM users WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setLong(1, id);
@@ -97,7 +81,7 @@ public class DataBase {
     }
 
     public boolean deleteUserById(Long id) {
-        try (connection) {
+        try (Connection connection = getConnection.getConnection();) {
             String query = "DELETE FROM users WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setLong(1, id);

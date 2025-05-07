@@ -8,33 +8,23 @@ import java.util.ArrayList;
 
 public class DataBaseTest {
 
+
     @Test
     void shouldGetJdbcConnection() throws SQLException {
         DataBase dataBase = new DataBase();
-        try (Connection connection = dataBase.getNewConnection()) {
-            assert (connection.isValid(0));
-        }
+        assert (dataBase.getConnection.getConnection().isValid(0));
     }
 
     @Test
     void shouldCreateEmptyDataBase() throws SQLException {
         DataBase dataBase = new DataBase();
         String query = "SELECT * FROM users";
-        dataBase.createTable();
         Assertions.assertFalse(dataBase.select(query).first());
     }
 
     @Test
-    void shouldCatchInsertException() {
+    void shouldAddAndFindUser() throws SQLException {
         DataBase dataBase = new DataBase();
-        dataBase.createTable();
-        dataBase.createTable();
-    }
-
-    @Test
-    void shouldAddAndFindUser() {
-        DataBase dataBase = new DataBase();
-        dataBase.createTable();
         dataBase.addUser(1L, "John", "example.com");
         dataBase.addUser(2L, "Mike", "email.ru");
         Assertions.assertEquals("John", dataBase.findById(1L).name);
@@ -43,8 +33,8 @@ public class DataBaseTest {
 
     @Test
     void shouldAddAndFindUserService() {
-        Service service = new Service(new DataBase());
-        service.createTable();
+        DataBase dataBase = new DataBase();
+        Service service = new Service(dataBase);
         service.addUser(1L, "Mike", "example.com");
         Assertions.assertEquals("example.com", service.findUserById(1L).email);
     }
@@ -52,7 +42,6 @@ public class DataBaseTest {
     @Test
     void shouldAddAndDeleteUser() throws SQLException {
         DataBase dataBase = new DataBase();
-        dataBase.createTable();
         dataBase.addUser(1L, "Jonn", "example.com");
         dataBase.deleteUserById(1L);
         String query = "SELECT * FROM users";
